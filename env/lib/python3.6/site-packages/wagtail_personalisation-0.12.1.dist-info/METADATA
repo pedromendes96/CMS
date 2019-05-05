@@ -1,0 +1,120 @@
+Metadata-Version: 2.1
+Name: wagtail-personalisation
+Version: 0.12.1
+Summary: A Wagtail add-on for showing personalized content
+Home-page: https://labdigital.nl/
+Author: Lab Digital BV and others
+Author-email: opensource@labdigital.nl
+License: MIT
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Framework :: Django
+Classifier: Framework :: Django :: 2.0
+Classifier: Topic :: Internet :: WWW/HTTP :: Site Management
+Provides-Extra: docs
+Provides-Extra: test
+Requires-Dist: wagtail (>=2.0)
+Requires-Dist: user-agents (>=1.1.0)
+Requires-Dist: wagtailfontawesome (>=1.1.3)
+Requires-Dist: pycountry
+Provides-Extra: docs
+Requires-Dist: sphinx (>=1.7.6); extra == 'docs'
+Requires-Dist: sphinx-rtd-theme (>=0.4.0); extra == 'docs'
+Provides-Extra: test
+Requires-Dist: factory-boy (==2.8.1); extra == 'test'
+Requires-Dist: flake8-blind-except; extra == 'test'
+Requires-Dist: flake8-debugger; extra == 'test'
+Requires-Dist: flake8-imports; extra == 'test'
+Requires-Dist: flake8; extra == 'test'
+Requires-Dist: freezegun (==0.3.8); extra == 'test'
+Requires-Dist: pytest-cov (==2.5.1); extra == 'test'
+Requires-Dist: pytest-django (==3.1.2); extra == 'test'
+Requires-Dist: pytest-pythonpath (==0.7.2); extra == 'test'
+Requires-Dist: pytest-sugar (==0.9.1); extra == 'test'
+Requires-Dist: pytest (==3.4.2); extra == 'test'
+Requires-Dist: wagtail-factories (==1.0.0); extra == 'test'
+Requires-Dist: pytest-mock (==1.6.3); extra == 'test'
+
+
+
+.. image:: logo.png
+   :height: 261
+   :width: 300
+   :scale: 50
+   :alt: Wagxperience
+   :align: center
+
+Wagtail Personalisation
+=======================
+
+Wagtail Personalisation is a fully-featured personalisation module for
+`Wagtail CMS`_. It enables editors to create customised pages
+- or parts of pages - based on segments whose rules are configured directly
+in the admin interface.
+
+.. _Wagtail CMS: http://wagtail.io/
+
+
+.. image:: screenshot.png
+
+
+Instructions
+------------
+Wagtail Personalisation requires Wagtail 2.0 or 2.1 and Django 1.11 or 2.0.
+
+To install the package with pip:
+
+.. code-block:: console
+
+    pip install wagtail-personalisation
+
+Next, include the ``wagtail_personalisation``, ``wagtail.contrib.modeladmin``
+and ``wagtailfontawesome`` apps in your project's ``INSTALLED_APPS``:
+
+.. code-block:: python
+
+    INSTALLED_APPS = [
+        # ...
+        'wagtail.contrib.modeladmin',
+        'wagtail_personalisation',
+        'wagtailfontawesome',
+        # ...
+    ]
+
+Make sure that ``django.contrib.sessions.middleware.SessionMiddleware`` has
+been added in first, this is a prerequisite for this project.
+
+.. code-block:: python
+
+    MIDDLEWARE = [
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        # ...
+    ]
+
+
+Documentation
+-------------
+
+You can find more information about installing, extending and using this module
+on `Read the Docs`_.
+
+.. _Read the Docs: http://wagtail-personalisation.readthedocs.io
+
+
+Sandbox
+-------
+
+To experiment with the package you can use the sandbox provided in
+this repository. To install this you will need to create and activate a
+virtualenv and then run ``make sandbox``. This will start a fresh Wagtail
+install, with the personalisation module enabled, on http://localhost:8000
+and http://localhost:8000/cms/. The superuser credentials are
+``superuser@example.com`` with the password ``testing``.
+
+

@@ -1,0 +1,426 @@
+{% extends './base.html' %}
+{% load static utils social image debug charts blocks localization wagtailcore_tags wagtailimages_tags %}
+
+<!-- STYLE -->
+{% block style %}
+
+{% get_distinct_block_types_list page.body as blocks_types %}
+
+{% have_image_slider_block blocks_types as have_image_slider %}
+{% have_chart_block blocks_types as have_chart %}
+{% have_google_maps_block blocks_types as have_google_maps %}
+{% have_facebook_block blocks_types as have_facebook %}
+{% have_instagram_block blocks_types as have_instagram %}
+{% have_pinterest_block blocks_types as have_pinterest %}
+
+{% if have_image_slider %}
+<link rel="stylesheet" href="{% static 'css/twentytwenty.css' %}" type="text/css" media="screen" />
+{% endif %}
+
+{% if have_chart %}
+{% endif %}
+
+{% if have_google_maps %}
+{% endif %}
+
+{% if have_facebook %}
+{% endif %}
+
+{% if have_instagram %}
+{% endif %}
+
+{% if have_pinterest %}
+{% endif %}
+
+
+{% endblock %}
+<!-- ENDSTYLE -->
+
+
+
+
+
+
+
+
+
+
+
+<!-- EARLY LOAD -->
+{% block early_load %}
+
+{% get_distinct_block_types_list page.body as blocks_types %}
+
+{% have_image_slider_block blocks_types as have_image_slider %}
+{% have_chart_block blocks_types as have_chart %}
+{% have_google_maps_block blocks_types as have_google_maps %}
+{% have_facebook_block blocks_types as have_facebook %}
+{% have_instagram_block blocks_types as have_instagram %}
+{% have_pinterest_block blocks_types as have_pinterest %}
+
+{% if have_image_slider %}
+{% endif %}
+
+{% if have_chart %}
+{% endif %}
+
+{% if have_google_maps %}
+{% endif %}
+
+{% if have_facebook %}
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/pt_PT/sdk.js#xfbml=1&version=v3.2&appId=600125753840893&autoLogAppEvents=1"></script>
+{% endif %}
+
+{% if have_instagram %}
+{% endif %}
+
+{% if have_pinterest %}
+{% endif %}
+
+{% endblock %}
+<!-- END EARLY LOAD -->
+
+
+
+
+
+
+<!-- BODY -->
+{% block body %}
+
+{% for block in page.body %}
+
+    {% is_image_slider_block block.block as is_image_slider_instance %}
+    {% is_chart_block block.block as is_chart_instance %}
+    
+    {% is_a_google_maps_block block.block as is_a_google_maps_instance %}
+    
+    {% is_a_facebook_post_block block.block as is_a_facebook_post_instance %}
+    {% is_a_facebook_video_block block.block as is_a_facebook_video_instance %}
+
+    {% is_a_instagram_block block.block as is_a_instagram_instance %}
+
+    {% is_a_pinterest_board_block block.block as is_a_pinterest_board_instance %}
+    {% is_a_pinterest_profile_block block.block as is_a_pinterest_profile_instance %}
+    {% is_a_pinterest_pin_block block.block as is_a_pinterest_pin_instance %}
+
+
+    {% if is_image_slider_instance %}
+    <div id="d_{{block.id}}">
+        <img src="{% get_media_prefix %}{{block.value.old_image.img.file.name}}" />
+        <img src="{% get_media_prefix %}{{block.value.new_image.img.file.name}}" />
+    </div>
+    {% elif is_chart_instance %}
+        <canvas id="c_{{block.id}}" width="100" height="100"></canvas>
+    {% elif is_a_google_maps_instance %}
+        <!-- Google Maps UI -->
+        <div id="m_{{block.id}}"></div>
+    {% elif is_a_facebook_post_instance %}
+        <div class="fb-post" data-href="{{block.value.url}}" data-width="{{block.value.width}}" data-show-text="{% if block.value.show_text %}true{% else %}false{% endif %}"><blockquote cite="{{block.value.url}}" class="fb-xfbml-parse-ignore"></blockquote></div>
+    {% elif is_a_facebook_video_instance %}
+        <div class="fb-video" 
+            data-href="{{block.value.url}}" 
+            data-width="{{block.value.width}}" 
+            data-show-text="{% if block.value.show_text %}true{% else %}false{% endif %}" 
+            data-allowfullscreen="{% if block.value.allow_full_screen %}true{% else %}false{% endif %}" 
+            data-autoplay="{% if block.value.auto_play %}true{% else %}false{% endif %}" 
+            data-show-text="{% if block.value.show_text %}true{% else %}false{% endif %}"
+            data-show-captions="{% if block.value.show_caption %}true{% else %}false{% endif %}"
+            ><blockquote cite="{{block.value.url}}" class="fb-xfbml-parse-ignore"></blockquote></div>
+    {% elif is_a_instagram_instance %}
+        <div id="i_{{block.id}}"></div>
+    {% elif is_a_pinterest_board_instance %}
+        {% get_sizes_pinterest block as sizes %}
+        <a data-pin-do="embedBoard" data-pin-board-width="{{sizes.data_pin_board_width}}" data-pin-scale-height="{{sizes.data_pin_scale_height}}" data-pin-scale-width="{{sizes.data_pin_scale_width}}" href="https://www.pinterest.com/pinterest/official-news/"></a>
+    {% elif is_a_pinterest_pin_instance %}
+        <a data-pin-do="embedPin" data-pin-width="{{block.value.size}}" data-pin-terse="{{block.value.hide_description}}" href="{{block.value.url}}"></a>
+    {% elif is_a_pinterest_profile_instance %}
+        {% get_sizes_pinterest block as sizes %}
+    <a data-pin-do="embedUser" data-pin-board-width="{{sizes.data_pin_board_width}}" data-pin-scale-height="{{sizes.data_pin_scale_height}}" data-pin-scale-width="{{sizes.data_pin_scale_width}}" href="https://www.pinterest.com/pinterest/"></a>
+    {% endif %}
+
+{% endfor %}
+
+{% endblock %}
+<!-- ENDBODY -->
+
+
+
+
+<!-- SCRIPT PRE LOAD -->
+{% block script_pre_load %}
+
+{% get_distinct_block_types_list page.body as blocks_types %}
+
+{% have_image_slider_block blocks_types as have_image_slider %}
+{% have_chart_block blocks_types as have_chart %}
+{% have_google_maps_block blocks_types as have_google_maps %}
+{% have_facebook_block blocks_types as have_facebook %}
+{% have_instagram_block blocks_types as have_instagram %}
+{% have_pinterest_block blocks_types as have_pinterest %}
+
+{% if have_image_slider %}
+<script src="{% static 'js/jquery.event.move.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery.twentytwenty.js' %}" type="text/javascript"></script>
+{% endif %}
+
+{% if have_chart %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js" type="text/javascript"></script>
+{% endif %}
+
+{% if have_google_maps %}
+{% endif %}
+
+{% if have_facebook %}
+{% endif %}
+
+{% if have_instagram %}
+{% endif %}
+
+{% if have_pinterest %}
+{% endif %}
+
+
+{% for block_type in blocks_types %}
+
+    {% is_image_slider_block block.block as is_image_slider_instance %}
+    {% is_chart_block block.block as is_chart_instance %}
+
+    {% is_a_google_maps_block block.block as is_a_google_maps_instance %}
+
+    {% is_a_facebook_post_block block.block as is_a_facebook_post_instance %}
+    {% is_a_facebook_video_block block.block as is_a_facebook_video_instance %}
+
+    {% is_a_instagram_block block.block as is_a_instagram_instance %}
+
+    {% is_a_pinterest_board_block block.block as is_a_pinterest_board_instance %}
+    {% is_a_pinterest_profile_block block.block as is_a_pinterest_profile_instance %}
+    {% is_a_pinterest_pin_block block.block as is_a_pinterest_pin_instance %}
+
+    {% if is_image_slider_instance %}
+    {% elif is_chart_instance %}
+    {% elif is_a_google_maps_instance %}
+    <script>
+        var map;
+        function initMap() {
+        map = new google.maps.Map(document.getElementById('m_{{block.id}}'), {
+            center: {lat: {{block.value.latitude}}, lng: {{block.value.longitude}}},
+            zoom: {{block.value.zoom}},
+            zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            streetViewControl: true,
+            rotateControl: true,
+            fullscreenControl: true
+        });
+        {% for marker in block.value.markers %}
+            var position{{forloop.counter}} = {lat: {{marker.latitude}}, lng: {{marker.longitude}}};
+            var marker{{forloop.counter}} = new google.maps.Marker({position: position{{forloop.counter}},draggable: true,animation: google.maps.Animation.DROP, map: map});
+            
+            {%  if marker.content %}
+                var contentString = "<div class='row'>" + 
+                "<div class='col-lg-4'><img src='{% get_media_prefix %}{{marker.content.image.image.url}}'</div>" +
+                "<div class='col-lg-8'><div class='row'><div class='col-lg-12'><h2>{{marker.content.heading}}</h2></div></div><div class='row'><div class='col-lg-12'><p>{{marker.content.paragraph}}</p></div></div></div>" +
+                "</div>";
+                var infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
+                marker{{forloop.counter}}.addListener('click', function() {
+                    infowindow.open(map, marker{{forloop.counter}});
+                });
+            {% endif %}
+        {% endfor %}
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{settings.site_settings.APISettings.google_maps_key}}&callback=initMap" async defer></script>
+    {% elif is_a_facebook_post_instance %}
+    {% elif is_a_facebook_video_instance %}
+    {% elif is_a_instagram_instance %}
+    {% elif is_a_pinterest_board_instance %}
+    {% elif is_a_pinterest_profile_instance %}
+    {% elif is_a_pinterest_pin_instance %}
+    {% endif %}
+
+{% endfor %}
+
+{% endblock %}
+<!-- END SCRIPT PRE LOAD -->
+
+
+
+
+
+<!-- SCRIPTS AFTER LOAD-->
+
+{% block script_after_load %}
+
+{% for block in page.body %}
+
+    {% is_image_slider_block block.block as is_image_slider_instance %}
+    {% is_chart_block block.block as is_chart_instance %}
+
+    {% is_a_google_maps_block block.block as is_a_google_maps_instance %}
+
+    {% is_a_facebook_post_block block.block as is_a_facebook_post_instance %}
+    {% is_a_facebook_video_block block.block as is_a_facebook_video_instance %}
+
+    {% is_a_instagram_block block.block as is_a_instagram_instance %}
+
+    {% is_a_pinterest_board_block block.block as is_a_pinterest_board_instance %}
+    {% is_a_pinterest_profile_block block.block as is_a_pinterest_profile_instance %}
+    {% is_a_pinterest_pin_block block.block as is_a_pinterest_pin_instance %}
+
+
+
+    {% if is_image_slider_instance %}
+    <script>
+        $(function(){
+            $("#d_{{block.id}}").twentytwenty();
+        });
+    </script>
+    {% elif is_chart_instance %}
+    <script>
+        $(function(){
+            var type = "";
+            var options = {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: '{{block.value.title}}'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                };
+            {% is_single_axe_chart block.block as is_single_axe %}
+            {% is_double_axe_chart block.block as is_double_axe %}
+            {% if is_double_axe %}
+            options.scales =  {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: '{{block.value.x_label}}'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: '{{block.value.y_label}}'
+                            }
+                        }]
+                    }
+            {% endif %}
+
+            var config =  {};
+            var datasets = [];
+            var labels = [];
+            {% is_line_chart block.block as is_line %}
+            {% is_bar_chart block.block as is_bar_chart %}
+            {% is_segment_chart block.block as is_segment %}
+            {% if is_line %}
+                type = 'line';
+            {% elif is_bar_chart %}
+                {% if block.value.orientation != "horizontal" %}
+                    type = 'bar';
+                {% else %}
+                    type = 'horizontalBar';
+                {% endif %}
+            {% elif is_segment %}
+            {% pdb %}
+                {% if block.value.mode != "doughnut" %}
+                    type = 'pie';
+                {% else %}
+                    type = 'doughnut';
+                {% endif %}
+            {% endif %}
+            var data_set_border_width = 3;
+            var data_set_point_radius = 6;
+            {% for label in block.value.x_labels %}
+                labels.push("{{label}}");
+            {% endfor %}
+            {% if is_double_axe %}
+                {% for data_set in block.value.data_sets %}
+                var data_set_label = "{{data_set.label}}";
+                var data_set_values = [];
+                {% for value in data_set.data %}
+                    data_set_values.push({{value}});
+                {% endfor %}
+                var data_set_border_color = "{{data_set.color}}";
+                var data_set_point_background_color = "{{data_set.color}}";
+                var data_set_point_border_color = "{{data_set.color}}";
+                var data_set_point_background_color = "{{data_set.color}}";
+                var fill = false;
+                var dataset_config = {
+                    label : data_set_label,
+                    data : data_set_values,
+                    borderColor: data_set_point_border_color,
+                    pointBackgroundColor: data_set_point_background_color,
+                    pointBorderColor: data_set_point_border_color,
+                    borderWidth: data_set_border_width,
+                    pointRadius: data_set_point_radius,
+                    fill: fill
+                };
+                datasets.push(dataset_config);
+                {% endfor %}
+            {% else %}
+                var data_set_label = "{{block.value.data_set.label}}";
+                var data_set_values = [];
+                var data_set_colors = [];
+                {% for element in block.value.data_set.data_values %}
+                data_set_values.push("{{element.data}}");
+                data_set_colors.push("{{element.color}}");
+                {% endfor %}
+                var data_set_border_color = data_set_border_color;
+                var data_set_point_background_color = data_set_point_background_color;
+                var data_set_point_border_color = data_set_point_border_color;
+                var fill = true;
+                var dataset_config = {
+                    label : data_set_label,
+                    data : data_set_values,
+                    backgroundColor : data_set_colors,
+                    borderColor: data_set_colors,
+                    pointBackgroundColor: data_set_colors,
+                    pointBorderColor: data_set_colors,
+                    borderWidth: data_set_colors,
+                    pointRadius: data_set_colors,
+                    fill: fill
+                };
+                datasets.push(dataset_config);
+            {% endif %}
+            config.type = type;
+            config.data = {};
+            config.data.labels = labels;
+            config.data.datasets = datasets;
+            config.options = options;
+            var ctx = document.getElementById("c_{{block.id}}").getContext('2d');
+            var chart = new Chart(ctx, config);
+        });
+    </script>
+    {% elif is_a_google_maps_instance %}
+    {% elif is_a_facebook_post_instance %}
+    {% elif is_a_facebook_video_instance %}
+    {% elif is_a_instagram_instance %}
+    <script>
+        $(function(){
+            $.get( "https://api.instagram.com/oembed/?url={{block.value.url}}&maxwidth={{block.value.width}}&hidecaption={% if block.value.hide_caption %}true{% else %}false{% endif %}", function( data ) {
+                $("#i_{{block_id}}").html(data.html);
+            });
+        });
+    </script>  
+    {% elif is_a_pinterest_board_instance %}
+    {% elif is_a_pinterest_profile_instance %}
+    {% elif is_a_pinterest_pin_instance %}
+    <script async defer src="//assets.pinterest.com/js/pinit.js"></script>
+    {% endif %}
+
+{% endfor %}
+{% endblock %}
+<!-- END LAST SCRIPTS -->

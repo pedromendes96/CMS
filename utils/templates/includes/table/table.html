@@ -1,0 +1,26 @@
+{% load table debug %}
+<thead>
+    <tr>
+        {% for col in thead %}
+        <td>
+            {{ col.1 }}
+        </td>
+        {% endfor %}
+        {%  if process.has_click_option or process.has_remove_option %}
+        <td>Opções</td>
+        {% endif %}
+    </tr>
+</thead>
+<tbody>
+    {% if object_list %}
+        {% for object in object_list %}
+        <tr>
+            {% for col in thead %}
+            <td>
+                {% get_object_attr object col.0 %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    {% endif %}
+</tbody>

@@ -1,0 +1,144 @@
+/* .nav-wrapper,
+.nav-wrapper .inner {
+  background-color: #1c3687 !important;
+}
+
+header {
+  background-color: #1c3687;
+}
+
+.nav-main .menu-active {
+  background: #0b1e57;
+}
+
+.nav-search input,
+.nav-search input:hover,
+.nav-search input:focus {
+  background-color: #46578d;
+  color: white;
+}
+
+li.submenu-active {
+  background: #334d9e;
+}
+
+.nav-main .menu-active > a {
+  border-left-color: #c6401a;
+}
+
+.c-explorer__header {
+  background: #0b1e57;
+  border-bottom: 1px solid #333;
+}
+
+.c-explorer {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #08257a;
+}
+
+.button,
+.button:hover {
+  background-color: #1c3687;
+  color: #fff;
+  border: 1px solid #1c3687;
+}
+
+.breadcrumb {
+  background: #1c3687;
+}
+
+.page-explorer .listing .index,
+.page-explorer .listing .index:hover {
+  color: #fff;
+  background-color: #1c3687;
+}
+
+.dropdown .dropdown-toggle:hover,
+.dropdown.open .dropdown-toggle {
+  background-color: #1c3687;
+}
+
+.dropdown .dropdown-toggle {
+  background-color: #1c3687;
+}
+
+.breadcrumb > li:hover {
+  background-color: #1c3687;
+}
+
+.tab-nav.merged {
+  background-color: #1c3687;
+}
+
+.tab-nav li.active a {
+  border-top: 0.3em solid #c6401a;
+}
+
+.tab-nav li a {
+  color: white;
+  background-color: #1c3687;
+  border-top: 0.3em solid #1c3687;
+}
+
+.tab-nav li a:hover {
+  color: black;
+  background-color: white;
+  border-top: 0.3em solid #c6401a;
+}
+
+.page-explorer .listing .index .button.bicolor {
+  background: #46578d;
+}
+
+a {
+  color: #1c3687;
+}
+
+a:hover {
+  color: #7d97ad;
+}
+
+.object > h2 label::before,
+.object > h2::before {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-shadow: none;
+  font-family: wagtail;
+  text-transform: none;
+  content: "q";
+  text-align: center;
+  display: block;
+  position: absolute;
+  z-index: 2;
+  font-size: 2em;
+  top: 0;
+  line-height: 1.8em;
+  left: 0;
+  width: 1.7em;
+  color: #fff;
+  padding: 0;
+  margin: 0;
+  background-color: #c6401a !important;
+}
+
+dropdown .button:hover,
+.dropdown button:hover,
+.dropdown input[type="button"]:hover,
+.dropdown input[type="reset"]:hover,
+.dropdown input[type="submit"]:hover {
+  background-color: #0b1e57;
+}
+
+.dropdown ul {
+  background-color: #1c3687;
+}
+
+/* header .button:hover {
+  background-color: #183dac;
+}
+
+header .button {
+  background-color: #2456f2;
+} */ */

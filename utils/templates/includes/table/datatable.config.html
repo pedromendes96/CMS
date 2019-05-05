@@ -1,0 +1,85 @@
+$.fn.dataTable.moment('DD/MM/YYYY HH:mm');
+table = $('#{{id}}').DataTable({
+    responsive: true,
+    {% if process.is_orderable %}
+    rowReorder: {
+        update: false,
+        selector: 'td.reorder'
+    },
+    {% endif %}
+
+    dom: '<"dataTables_header">Bfrt<"dataTables_footer"ipl>',
+    buttons: {{process.buttons|safe}},
+    processing: true,
+    serverSide: true,
+    ajax: {
+        "url": "{{process.ajax_url|safe}}",
+    },
+    columns: [
+        {% for col in process.thead %}
+            { "data": "{{col.0}}" },
+        {% endfor %}
+
+        {%  if process.has_click_option or process.has_remove_option %}
+            { "data": null },
+        {% endif %}
+    ],
+    columnDefs: [
+        {% if process.is_orderable %}
+            { orderable: true, className: 'reorder', targets: 1 },
+            { orderable: false, targets: '_all' },
+        {% endif %}
+    ],
+    lengthMenu: {{process.length_menu|safe}},
+    pageLength: {{process.page_length|safe}},
+    order: {{process.query_order|safe}},
+    language: {
+        processing: "<span>A Processar</span>",
+        search: "",
+        lengthMenu: "Mostrar _MENU_ registos",
+        info: "<strong>_START_</strong> a <strong>_END_</strong> de _TOTAL_ registos",
+        infoEmpty: "0 registos",
+        infoFiltered: ", filtrados em _MAX_ registos",
+        infoPostFix: "",
+        loadingRecords: "A carregar",
+        zeroRecords: "0 registos",
+        emptyTable: "Não existem resultados",
+        paginate: {
+            first: "Primeira",
+            previous: "Anterior",
+            next: "Seguinte",
+            last: "Última"
+        },
+        aria: {
+            sortAscending: ": activer pour trier la colonne par ordre croissant",
+            sortDescending: ": activer pour trier la colonne par ordre décroissant"
+        }
+    },
+    "rowCallback": function(row, data) {
+        for (var i = 0, keys = Object.keys(data), l = keys.length; i < l; i++) {
+            if (data[keys[i]] == null)
+                $('td:eq(' + (i - 1) + ')', row).html("<div class='null'></div>")
+            if (typeof data[keys[i]] == typeof true) {
+                if (data[keys[i]]) {
+                    $('td:eq(' + (i - 1) + ')', row).html("<div class='true'></div>")
+                } else {
+                    $('td:eq(' + (i - 1) + ')', row).html("<div class='false'></div>")
+                }
+            }
+        }
+        $(row).attr("data-href", data["redirect_link"]);
+    },
+    "drawCallback": function(settings) {
+        {%  if process.has_click_option %}
+            $(".edit").each(function (index, element) {
+                $(this).attr("href", $(this).closest("tr").attr("data-href"));
+            });
+        {% endif %}
+    }
+});
+
+$('#table tbody').on('click', 'td', function () {
+    var tr = $(this).parent("tr");
+    var url = tr.attr("data-href");
+    location.href = url;
+});

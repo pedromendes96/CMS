@@ -1,0 +1,241 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n modeladmin_tags static %}
+
+{% block titletag %}{{ view.get_meta_title }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+    {{ block.super }}
+    {{ view.media.css }}
+{% endblock %}
+
+{% block extra_js %}
+    {{ view.media.js }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+    <script>
+    var classNames = ["{{category_name}}", "{{section_name}}"];
+
+    function onCreate(data, result){
+        $("#tree").jstree(true).refresh();
+    }
+
+    function onRename(data, result){
+        $("#tree").jstree(true).refresh();
+    }
+
+    $(
+        function () {
+            var tree = $('#tree').jstree({
+                'core' : {
+                    "check_callback" : true,
+                    'data' : {
+                        'url' : "{% url 'ajax_tree_structure' %}",
+                        "dataType" : "json"
+                    },
+                    "check_callback" : true
+                },
+                "types" : {
+                    "true" : {
+                        "icon" : "{% static 'imgs/active.png' %}"
+                    },
+                    "false" : {
+                        "icon" : "{% static 'imgs/inactive.png' %}"
+                    }
+                },
+                "plugins" : [
+                    "contextmenu",
+                    "dnd",
+                    "wholerow",
+                    "types"
+                ],
+                "contextmenu":{         
+                    "items": function($node) {
+                        var tree = $("#tree").jstree(true);
+                        var active = $("#"+$node.id).attr("data-status") == 'true';
+                        var key = "";
+                        var url = "";
+                        var icon = "";
+                        if(active){
+                            key = "Inactivate";
+                            url = "{% url 'ajax_inactivate' %}";
+                            icon = "{% static 'imgs/taxonomy-remove-button.png' %}";
+                        }else{
+                            key = "Activate";
+                            url = "{% url 'ajax_activate' %}";
+                            icon = "{% static 'imgs/taxonomy-add-button.png' %}";
+                        }
+                        var status_item = {
+                            "separator_before": false,
+                            "separator_after": false,
+                            "icon" : icon,
+                            "action": function (obj) {
+                                var split = $node.id.split("_");
+                                var class_name = split[0];
+                                var id = split[1];
+                                $.post(
+                                    url,
+                                    {
+                                        "class" : class_name,
+                                        "id" : id
+                                    },
+                                    (data, result) => {
+                                        $("#tree").jstree(true).refresh();
+                                    },
+                                    'json'
+                                );
+                            }
+                        };
+                        status_item["label"] = key;
+                        return {
+                            "Create": {
+                                "separator_before": false,
+                                "separator_after": false,
+                                "label": "Create",
+                                "icon" : "{% static 'imgs/taxonomy-add-button.png' %}",
+                                "action": function (obj) { 
+                                    $node = tree.create_node($node,{
+                                        "icon" : "{% static 'imgs/active.png' %}"
+                                    });
+                                    tree.edit($node);
+                                }
+                            },
+                            "Rename": {
+                                "separator_before": false,
+                                "separator_after": false,
+                                "label": "Rename",
+                                "icon" : "{% static 'imgs/taxonomy-rename-button.png' %}",
+                                "action": function (obj) {
+                                    tree.edit($node);
+                                }
+                            },                     
+                            key : status_item,
+                            "Edit" : {
+                                "separator_before": false,
+                                "separator_after": false,
+                                "label": "Edit",
+                                "icon" : "{% static 'imgs/taxonomy-edit-button.png' %}",
+                                "action": function (obj) {
+                                    window.location.href = $("#"+$node.id).attr("data-edit");
+                                }
+                            }
+                        };
+                    }
+                }
+            });
+
+            tree.on('rename_node.jstree', function (e, data) {
+                console.log(e);
+                console.log(data);
+                var split = data.node.id.split("_");
+                var class_name = split[0];
+                var id = split[1];
+                var context = {};
+                var url = "";
+                if(classNames.includes(class_name)){
+                    url = "{% url 'ajax_rename' %}";
+                    context = {
+                        "class" : class_name,
+                    }
+                }else{
+                    url = "{% url 'ajax_create' %}";
+                    if(data.node.parent == "#"){
+                        context = {
+                            "class" : "{{section_name}}",
+                        };
+                    }else{
+                        context = {
+                            "class" : "{{category_name}}",
+                        };
+                    }
+                    var split = data.node.parent.split("_");
+                    context.parent_class = split[0];
+                    context.parent_id = split[1];
+                }
+                context.id = id;
+                context.name = data.node.text;
+                $.post(
+                    url,
+                    context,
+                    () => {
+                        $("#tree").jstree(true).refresh();
+                    },
+                    'json'
+                );
+            });
+
+            tree.on('move_node.jstree', function (e, data) {
+                console.log(e);
+                console.log(data);
+                var instance_split = data.node.id.split("_");
+                var parent_split = data.parent.split("_");
+                var has_parent = parent_split[0] == "#" ? false : true;
+                var context = {
+                    "class" : instance_split[0],
+                    "id" : instance_split[1],
+                    "has_parent" : has_parent,
+                    "position" : data.position
+                }
+                if(has_parent){
+                    context["parent_class"] = parent_split[0];
+                    context["parent_id"] = parent_split[1];
+                }
+                $.post(
+                    "{% url 'ajax_move' %}",
+                    context,
+                    () => {
+                        $("#tree").jstree(true).refresh();
+                    },
+                    'json'
+                )
+            })
+        }
+    );
+    </script>
+{% endblock %}
+
+{% block content %}
+    {% block header %}
+        <header class="nice-padding hasform">
+            <div class="row header-title">
+                <div class="left">
+                    <div class="col">
+                        {% block h1 %}<h1 {% if view.header_icon %}class="icon icon-{{ view.header_icon }}"{% endif %}>{{ view.get_page_title }}<span></span></h1>{% endblock %}
+                    </div>
+                    {% block search %}{% search_form %}{% endblock %}
+                </div>
+            </div>
+        </header>
+    {% endblock %}
+
+    {% block content_main %}
+        <div>
+            <div class="row">
+                    <div class="result-list {% if view.has_filters and all_count %}col9{% else %}col12{% endif %}">
+                        {% block result_list %}
+                            {% if not all_count %}
+                                <div class="nice-padding" style="margin-top:30px;">
+                                    {% if no_valid_parents %}
+                                        <p>{% blocktrans with view.verbose_name_plural as name %}No {{ name }} have been created yet. One of the following must be created before you can add any {{ name }}:{% endblocktrans %}</p>
+                                        <ul>
+                                            {% for type in required_parent_types %}<li><b>{{ type|title }}</b></li>{% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p>{% blocktrans with view.verbose_name_plural as name %}No {{ name }} have been created yet.{% endblocktrans %}
+                                        {% if user_can_create %}
+                                            {% blocktrans with view.create_url as url %}
+                                                Why not <a href="{{ url }}">add one</a>?
+                                            {% endblocktrans %}
+                                        {% endif %}</p>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div id="tree"></div>
+                            {% endif %}
+                        {% endblock %}
+                    </div>
+            </div>
+        </div>
+    {% endblock %}
+
+{% endblock %}
