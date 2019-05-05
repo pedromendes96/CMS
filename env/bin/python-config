@@ -1,4 +1,4 @@
-#!/home/pmendes/Desktop/Thesis-DNOTICIAS/DNOTICIAS/env/bin/python
+#!/home/pmendes/Desktop/CMS/env/bin/python
 
 import sys
 import getopt
