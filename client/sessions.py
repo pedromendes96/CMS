@@ -3,14 +3,12 @@ import logging
 
 import urllib3
 
-from ..polls.utils import get_cas_token
+from .utils import get_cas_token
 from django.conf import settings
 from django.contrib.auth import BACKEND_SESSION_KEY, HASH_SESSION_KEY
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.sessions.backends.cache import SessionStore as CacheSessionStore
-
-from .models import Edition, Publication
 
 logger = logging.getLogger('polls')
 
@@ -28,7 +26,8 @@ class SessionStore(CacheSessionStore):
         try:
             session_data = self._cache.get(self.cache_key)
         except Exception:
-            logger.exception("couldnt get the session with the key -> {}".format(self.cache_key))
+            logger.exception(
+                "couldnt get the session with the key -> {}".format(self.cache_key))
             # Some backends (e.g. memcache) raise an exception on invalid
             # cache keys. If this happens, reset the session. See #17810.
             session_data = None
@@ -43,31 +42,31 @@ class SessionStore(CacheSessionStore):
                 raise Exception("There is no token in the DB")
             headers = {'Authorization': 'Token {}'.format(token)}
             response = http.request('POST', settings.DCAS_SESSION_ENDPOINT, headers=headers,
-                                    fields={settings.SESSION_COOKIE_NAME: self._session_key,
-                                            "model_names": Edition.__name__ + "," + Publication.__name__})
+                                    fields={settings.SESSION_COOKIE_NAME: self._session_key})
             if response.status == 200:
                 result = json.loads(response.data.decode('utf-8'))
                 json_res = result["session"]
                 json_groups = result["groups"]
                 try:
-                    user = UserModel.objects.get(id=int(json_res["user"]["id"]))
+                    user = UserModel.objects.get(
+                        id=int(json_res["user"]["id"]))
                     self._update_groups(json_groups, user)
                 except Exception as identifier:
                     logger.exception(
                         "This means that process of update groups cant be done now because the respective user still didnt go to one page of this service after being authenticated in one service.")
-                if 'session' in json_res and BACKEND_SESSION_KEY in json_res['session'] and HASH_SESSION_KEY in \
-                        json_res['session']:
+                if 'session' in json_res and BACKEND_SESSION_KEY in json_res['session'] and HASH_SESSION_KEY in json_res['session']:
                     session_dict = json_res['session']
                     session_dict[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
                     session_dict[HASH_SESSION_KEY] = True
                     session_dict['user_roles'] = json_res['user_roles']
                     session_dict['user'] = json_res['user']
                     session_dict["groups"] = json_groups
-                    # @check 
+                    # @check
                     session_dict['history_roles'] = json_res['history_roles']
                     session_dict['warnings'] = json_res['warnings']
                     session_dict["consumables"] = json_res['consumables']
-                    self._cache.set(key=self.cache_key, value=session_dict, timeout=settings.DCAS_SESSION_CACHE_TIMEOUT)
+                    self._cache.set(key=self.cache_key, value=session_dict,
+                                    timeout=settings.DCAS_SESSION_CACHE_TIMEOUT)
                     return session_dict
 
             # print(vars(response))

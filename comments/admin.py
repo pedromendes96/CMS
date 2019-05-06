@@ -2,7 +2,6 @@ from django.contrib import admin
 from wagtail.contrib.modeladmin.options import (
     ModelAdmin, modeladmin_register)
 from .models import Comment
-from .views import CommentsIndexView
 from django.apps import apps
 
 # Register your models here.
@@ -22,7 +21,6 @@ class CommentsAdmin(ModelAdmin):
     list_display = ('status',)
     list_filter = ('status',)
     search_fields = ('status',)
-    index_view_class = CommentsIndexView
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

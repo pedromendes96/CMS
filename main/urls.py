@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.urls import path
+import django_cas_ng.views
 
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.core import urls as wagtail_urls
@@ -23,7 +24,14 @@ urlpatterns = [
 
     url(r'^api/v2/', api_router.urls),
 
-    url(r'^api/1_0/', internal_api_urls),
+    path('accounts/login', django_cas_ng.views.LoginView.as_view(),
+         name='cas_ng_login'),
+    path('accounts/logout', django_cas_ng.views.LogoutView.as_view(),
+         name='cas_ng_logout'),
+    path('accounts/callback', django_cas_ng.views.CallbackView.as_view(),
+         name='cas_ng_proxy_callback'),
+
+    url(r'^api/1_0/', include(internal_api_urls)),
     url(r'^ajax/', include(ajax_urls)),
 
     url(r'^images/([^/]*)/(\d*)/([^/]*)/[^/]*$',

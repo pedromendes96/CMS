@@ -25,11 +25,12 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
     'utils',
+    'client',
     'users',
     'comments',
     'taxonomy',
     'news',
-    'newsletter',
+    # 'newsletter',
     'polls',
     'roles',
     'cases_of_the_day',
@@ -215,3 +216,11 @@ SESSION_COOKIE_DOMAIN = '.dnoticias.pt'
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
 )
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'client_cache_table',
+        # 'DEFAULT_TIMEOUT': 10
+    }
+}

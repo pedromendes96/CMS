@@ -2,9 +2,12 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
-
+from utils.models import ActivatableModel
+from wagtail.admin.edit_handlers import FieldPanel
 
 # Create your models here.
+
+
 class RemoteUser(AbstractUser):
 
     def get_session_auth_hash(self):
@@ -25,7 +28,7 @@ class RemoteUser(AbstractUser):
         verbose_name_plural = _('Remote Users')
 
 
-class ServiceInfo(models.Model):
+class ServiceInfo(ActivatableModel):
     """
     it will save in the db the services registered in the mediator
     """
@@ -39,3 +42,12 @@ class ServiceInfo(models.Model):
         context.update({
             "Authorization": "Token {}".format(self.token)
         })
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('base_url'),
+        FieldPanel('is_cas'),
+        FieldPanel('domain'),
+        FieldPanel('token'),
+        FieldPanel('active'),
+    ]

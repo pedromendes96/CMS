@@ -9,7 +9,7 @@ from .sessions import SessionStore as Session
 from rest_framework.views import APIView
 from django.db import DatabaseError, transaction
 
-from ..utils import get_cas_token
+from .utils import get_cas_token
 
 
 class CASNotification(APIView):

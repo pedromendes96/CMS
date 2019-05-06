@@ -49,6 +49,14 @@ class Section(ClusterableModel, ActivatableOrderableModel):
     def __str__(self):
         return "{}".format(self.name)
 
+    def get_categories_hierarchy(self):
+        all_data_categories = []
+        main_categories = self.get_main_categories()
+        for category in main_categories:
+            category_context = category.recursive_category()
+            all_data_categories.append(category_context)
+        return all_data_categories
+
     def add_category(self, category):
         category.section = self
         category.save(update_fields=["section"])
@@ -140,6 +148,19 @@ class Category(AbstractCategory):
 
     def __str__(self):
         return "{}".format(self.name)
+
+    def recursive_category(self):
+        context = dict()
+        context["instance"] = self
+        children_data = []
+        children = self.get_children()
+        if children.count() == 0:
+            return context
+        else:
+            for child in children:
+                children_data.append(child.recursive_category())
+        context["children"] = children_data
+        return context
 
     def get_active_children(self):
         return Category.objects.filter(parent=self, active=True).order_by("sort_order")
