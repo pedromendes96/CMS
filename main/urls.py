@@ -23,7 +23,7 @@ urlpatterns = [
 
     url(r'^api/v2/', api_router.urls),
 
-    # url(r'^api/', internal_api_urls),
+    url(r'^api/1_0/', internal_api_urls),
     url(r'^ajax/', include(ajax_urls)),
 
     url(r'^images/([^/]*)/(\d*)/([^/]*)/[^/]*$',

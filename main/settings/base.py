@@ -74,15 +74,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cas_ng',
     "wagtail.contrib.table_block",
     'simple_history',
 ]
 
 MIDDLEWARE = [
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_cas_ng.middleware.CASMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -197,3 +199,19 @@ GA_VIEW_ID = 'ga:192696991'
 SOCCER_VIDEO_API = "https://www.scorebat.com/video-api/v1/"
 API_FOOTBALL_BASE_URL = "https://www.api-football.com/demo/api/"
 API_FOOTBALL_TOKEN = "5d9a3f35763e15a339b25a9600c11a96a12bcd585a5a67f100c89b6122c701c5"
+
+
+AUTH_USER_MODEL = 'client.RemoteUser'
+AUTHENTICATION_BACKENDS = (
+    'client.backends.DCASBackend',
+)
+
+# SESSIONS
+SESSION_ENGINE = 'client.sessions'
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 365  # 365
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_DOMAIN = '.dnoticias.pt'
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)

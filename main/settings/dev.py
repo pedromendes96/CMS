@@ -53,3 +53,23 @@ PYTRACKING_CONFIGURATION = {
     "default_metadata": {"pod": "dcs"}
 }
 INTERNAL_IPS = ['127.0.0.1']
+
+IS_HTTPS = True if os.environ.get('IS_HTTPS', False) else False
+SCHEME = 'https' if IS_HTTPS else 'http'
+IM_RUNNING_INSIDE_CONTAINER = os.environ.get(
+    'AM_I_IN_A_DOCKER_CONTAINER', False)
+if IM_RUNNING_INSIDE_CONTAINER:
+    DCS_BASE_URL = "{}://casclient0.dnoticias.pt:8010".format(SCHEME)
+    POLL_BASE_URL = "{}://casclient3.dnoticias.pt:8013".format(SCHEME)
+else:
+    DCS_BASE_URL = "{}://casclient0.dnoticias.pt:9010".format(SCHEME)
+    POLL_BASE_URL = "{}://casclient3.dnoticias.pt:9013".format(SCHEME)
+
+DCAS_SESSION_ENDPOINT = urljoin(
+    DCS_BASE_URL, 'api/1_0/dcas/__session/validate')
+DCAS_SESSION_CACHE_TIMEOUT = 10  # timeout until revalidate SESSION with CAS server
+DCS_API_TIMEOUT = 10
+
+
+CSRF_COOKIE_SECURE = IS_HTTPS
+SESSION_COOKIE_SECURE = IS_HTTPS
