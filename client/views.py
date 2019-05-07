@@ -27,11 +27,6 @@ class CASNotification(APIView):
         callback = request.POST.get('callback', None)
 
         url = urljoin(settings.DCS_API_ENDPOINT, callback)
-        token = get_cas_token()
-        if token is None:
-            raise Exception("There is no token in the DB")
-        headers = {'Authorization': 'Token {}'.format(token)}
         timeout = settings.DCS_API_TIMEOUT
-        rs = requests.get(url, headers=headers,
-                          timeout=timeout, allow_redirects=False)
+        rs = requests.get(url, timeout=timeout, allow_redirects=False)
         return rs.json()

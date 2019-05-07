@@ -37,11 +37,7 @@ class SessionStore(CacheSessionStore):
 
         try:
             http = urllib3.PoolManager()
-            token = get_cas_token()
-            if token is None:
-                raise Exception("There is no token in the DB")
-            headers = {'Authorization': 'Token {}'.format(token)}
-            response = http.request('POST', settings.DCAS_SESSION_ENDPOINT, headers=headers,
+            response = http.request('POST', settings.DCAS_SESSION_ENDPOINT,
                                     fields={settings.SESSION_COOKIE_NAME: self._session_key})
             if response.status == 200:
                 result = json.loads(response.data.decode('utf-8'))
