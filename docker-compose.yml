@@ -17,15 +17,6 @@ services:
       - 9200:9200
     networks:
       - default
-  gotify:
-    image: cthit/gotify:latest
-    environment:
-      GOTIFY_PRE-SHARED-KEY: "GOTIFY"
-      GOTIFY_MOCK-MODE: "true"
-    ports:
-      - 8080:8080
-    networks:
-      - default
 volumes:
   esdata1:
     driver: local
